@@ -7,6 +7,7 @@ interface GameBoardProps {
   outerLetters: string[];
   onSubmit: (word: string) => void;
   message: string;
+  isError: boolean;
 }
 
 function HexButton({
@@ -42,6 +43,7 @@ export default function GameBoard({
   outerLetters,
   onSubmit,
   message,
+  isError,
 }: GameBoardProps) {
   const [input, setInput] = useState("");
   const [shuffled, setShuffled] = useState(outerLetters);
@@ -109,7 +111,7 @@ export default function GameBoard({
   return (
     <div className="flex flex-col items-center">
       {/* Input display */}
-      <div className="h-12 flex items-center justify-center mb-4 min-w-[200px]">
+      <div className={`h-12 flex items-center justify-center mb-4 min-w-[200px] ${isError ? "animate-shake" : ""}`}>
         <span className="text-2xl font-semibold tracking-widest uppercase">
           {displayInput.length > 0 ? displayInput : (
             <span className="text-neutral-300">Type or click</span>
@@ -119,12 +121,12 @@ export default function GameBoard({
       </div>
 
       {/* Message */}
-      <div className="h-6 mb-4">
+      <div className="h-8 mb-3 flex items-center justify-center">
         {message && (
-          <p className={`text-sm font-medium ${
-            message.includes("!") || message.includes("+")
-              ? "text-green-600"
-              : "text-red-500"
+          <p className={`text-sm font-medium px-4 py-1 rounded-full ${
+            isError
+              ? "bg-red-50 text-red-600"
+              : "bg-green-50 text-green-600"
           }`}>
             {message}
           </p>

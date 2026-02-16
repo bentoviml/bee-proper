@@ -18,7 +18,14 @@ export function isPangram(word: string, puzzleLetters: string[]): boolean {
   return puzzleLetters.every((l) => wordLetters.has(l.toUpperCase()));
 }
 
-/** Get today's date as YYYY-MM-DD in UTC */
-export function getTodayUTC(): string {
-  return new Date().toISOString().split("T")[0];
+/** Get today's date as YYYY-MM-DD in America/New_York timezone */
+export function getTodayET(): string {
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(now);
+  return parts; // en-CA locale gives YYYY-MM-DD format
 }

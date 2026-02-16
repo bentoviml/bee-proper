@@ -5,6 +5,7 @@ import AuthGuard from "@/components/AuthGuard";
 import GameBoard from "@/components/GameBoard";
 import ScoreDisplay from "@/components/ScoreDisplay";
 import FoundWords from "@/components/FoundWords";
+import HowToPlay from "@/components/HowToPlay";
 import type { PuzzleClient } from "@/types";
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
   const [foundWords, setFoundWords] = useState<string[]>([]);
   const [score, setScore] = useState(0);
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,6 +35,7 @@ export default function Home() {
       if (!puzzle) return;
 
       setMessage("");
+      setIsError(false);
 
       const res = await fetch("/api/check-word", {
         method: "POST",
@@ -45,12 +48,17 @@ export default function Home() {
       if (data.valid) {
         setFoundWords(data.foundWords);
         setScore(data.totalScore);
+        setIsError(false);
         setMessage(`+${data.score} points!`);
       } else {
-        setMessage(data.error || "Not valid");
+        setIsError(true);
+        setMessage(data.error || "Not a valid word");
       }
 
-      setTimeout(() => setMessage(""), 2000);
+      setTimeout(() => {
+        setMessage("");
+        setIsError(false);
+      }, 2000);
     },
     [puzzle]
   );
@@ -60,9 +68,12 @@ export default function Home() {
       <main className="min-h-screen bg-neutral-50 py-8 px-4">
         <div className="max-w-lg mx-auto">
           <h1 className="text-3xl font-bold text-center mb-1">Bee Proper</h1>
-          <p className="text-neutral-400 text-center text-sm mb-6">
-            Find proper nouns using these letters
-          </p>
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <p className="text-neutral-400 text-sm">
+              Find proper nouns using these letters
+            </p>
+            <HowToPlay />
+          </div>
 
           {loading ? (
             <div className="flex justify-center py-20">
@@ -80,6 +91,7 @@ export default function Home() {
                 outerLetters={puzzle.outer_letters}
                 onSubmit={handleSubmit}
                 message={message}
+                isError={isError}
               />
               <FoundWords
                 words={foundWords}

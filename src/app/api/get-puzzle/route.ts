@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getTodayUTC } from "@/lib/utils";
+import { getTodayET } from "@/lib/utils";
 
 export async function GET() {
   const supabase = await createClient();
@@ -13,7 +13,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const today = getTodayUTC();
+  const today = getTodayET();
 
   // Get today's puzzle
   const { data: puzzle, error: puzzleError } = await supabase
